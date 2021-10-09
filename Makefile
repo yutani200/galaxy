@@ -1,8 +1,6 @@
 #Makefile
 CC	= gcc
 CFLAGS	= -Wall -O2 -I/usr/local/include
-DEST	= /usr/local/bin
-LDFLAGS = -L/usr/local/lib
 LIBS = -lm
 OBJS = main.o unit.o run.o calc_energy.o gaussian.o setup.o
 PROGRAM = nbody.out

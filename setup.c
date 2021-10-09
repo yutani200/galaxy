@@ -1,4 +1,5 @@
 #include <math.h>
+#include <stdlib.h>
 #include "unit.h"
 #include "config.h"
 #include "struct.h"
@@ -9,31 +10,33 @@
 
 #define STAR 200
 
-void make_spherical_df(int n,double R, double M, double r_v,Istar *star){
+void make_spherical_df(int NMAX,double Rstar, double Mstar, double r_v,double eps,Istar *star){
   int i,k;
   double W,sigma;
   double dum_x, dum_y, dum_z, r2;
 	double rstar,mstar;
   sigma = 1.0;
-	rstar = R*PC_CGS/UnitLength;
-	mstar = M*Msun_CGS/UnitMass;
+	rstar = Rstar/UnitLength;
+	mstar = Mstar/UnitMass/NMAX;
 	fprintf(stderr,"pre drand\n");
-  for(i=0; i<n; i++){
+  for(i=0; i<NMAX; i++){
     do{
       dum_x  = 2.0*drand48() - 1.0;
       dum_y  = 2.0*drand48() - 1.0;
       dum_z  = 2.0*drand48() - 1.0;
       r2 = SQR(dum_x) + SQR(dum_y) + SQR(dum_z);
     }while(r2 > 1 || r2 == 0.0);
+    star[i].eps = eps/UnitLength;
     star[i].x[0] = rstar*dum_x;
     star[i].x[1] = rstar*dum_y;
     star[i].x[2] = rstar*dum_z;
-    star[i].m    = mstar*M/n;
+    star[i].m    = mstar;
+    //fprintf(stderr,"star[i].x[0] = %lf\n",star[i].x[0]);
   }
 	fprintf(stderr,"pre calc_W\n");
-  W = calc_W(n, W, r_v, star);
+  W = calc_W(NMAX, W, r_v, star);
   sigma = sqrt(2.0*r_v*fabs(W)/3.0);
-  for(i=0; i<n; i++){
+  for(i=0; i<NMAX; i++){
     for(k=0; k<3; k++){
       star[i].v[k] = sigma*gaussian();
     }
@@ -71,14 +74,14 @@ void read_nemo(int NMAX,double Mstar,double Rstar,double eps,Istar *star){
   if(NMAX == 1000)
     fp=fopen("pl1k.ascii","r");
   fscanf(fp,"%d%d%lf",&nn,&dim,&t);
-  star[i].eps = eps;
   for(i=0;i<nn;i++) fscanf(fp,"%lf",&star[i].m);
   for(i=0;i<nn;i++) fscanf(fp,"%lf %lf %lf",&star[i].x[0],&star[i].x[1],&star[i].x[2]);
   for(i=0;i<nn;i++) fscanf(fp,"%lf %lf %lf",&star[i].v[0],&star[i].v[1],&star[i].v[2]);
   fclose(fp); 
-  mstar = Mstar*Msun_CGS/UnitMass/NMAX;
-  rstar = Rstar*PC_CGS/UnitLength;
+  mstar = Mstar/UnitMass/NMAX;
+  rstar = Rstar/UnitLength;
   for(i=0;i<nn;i++){
+    star[i].eps = eps/UnitLength;
     star[i].m *= mstar;
     for(int j=0;j<3;j++) star[i].x[j] *= rstar;
   }
@@ -98,8 +101,11 @@ void read_nemo(int NMAX,double Mstar,double Rstar,double eps,Istar *star){
 		star[i].v[1] = sqrt(fabs(AccR*Rxy))*cos_p;
 		star[i].v[2] = cs*gaussian();
 	}
-  star[0].m = 1e6*Msun_CGS/UnitMass;
+  /*
+  //SMBH
+  star[0].m = Msun_CGS/UnitMass;
   for(int j=0;j<3;j++) star[0].x[j] = 0.0;
   for(int j=0;j<3;j++) star[0].v[j] = 0.0;
+  */
   return;
 }
