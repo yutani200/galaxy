@@ -6,6 +6,7 @@
 #include "output.c"
 #include "unit.h"
 #include "calc_energy.h"
+#include "flags.h"
 
 double calc_dt(int NMAX,double pre_dt,Istar *star);
 double Iterate_dt(int NMAX,double pre_dt,Istar *star);
@@ -66,10 +67,11 @@ double calc_dt(int NMAX,double pre_dt,Istar *star){
     }
     //fprintf(stderr,"star[%d]:a[1] = %f,a[2] = %f,a[3] = %f\n",i,star[i].a[0],star[i].a[1],star[i].a[2]);
   }
-  dt  = (0.01*sqrt(0.1*star[0].eps/vel_tmp) + pre_dt)*0.5;
+  //dt  = (0.01*sqrt(star[0].eps/vel_tmp) + pre_dt)*0.5;
+  dt  = (0.01*star[0].eps/vel_tmp);
   fprintf(stderr,"max_vel = %f\n",vel_tmp);
   //dt  = (0.01*sqrt(0.1*star[0].eps/acc_tmp) + pre_dt)*0.5;
-  //dt  = 0.0001*sqrt(star[0].eps/acc_tmp);
+  //dt  = 0.01*sqrt(star[0].eps/acc_tmp);
   //fprintf(stderr,"max_acc = %f\n",acc_tmp);
   return dt;
 }
@@ -170,9 +172,13 @@ void run(int NMAX,double Tend,double output_dt,Istar *star){
   calc_force(NMAX,star);
   while(T < Tend){
     dt = get_dt(NMAX,T,dt,output_dt*file_num,star);
-    //euler(n,dt,star);
-    //sympletic_euler(n,m,x,vel,acc,dt,eps2);
+#ifdef EULER
+    euler(NMAX,dt,star);
+#elif defined(SYMPLETIC_EULER)
+    sympletic_euler(NMAX,dt,star);
+#elif defined(LEAP_FROG)
     leap_frog(NMAX,dt,star);
+#endif
     H = calc_energy(NMAX,star);
     if(nstep==1.0){
       H0 = H;
