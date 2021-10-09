@@ -10,7 +10,7 @@
 
 #define STAR 200
 
-void make_spherical_df(int NMAX,double Rstar, double Mstar, double r_v,double eps,Istar *star){
+void make_spherical_df(int NMAX,double Rstar, double Mstar, double r_v,double eps,ISTAR *star){
   int i,k;
   double W,sigma;
   double dum_x, dum_y, dum_z, r2;
@@ -31,7 +31,7 @@ void make_spherical_df(int NMAX,double Rstar, double Mstar, double r_v,double ep
     star[i].x[1] = rstar*dum_y;
     star[i].x[2] = rstar*dum_z;
     star[i].m    = mstar;
-    //fprintf(stderr,"star[i].x[0] = %lf\n",star[i].x[0]);
+    fprintf(stderr,"star[i].x[0] = %lf\n",star[i].x[0]);
   }
 	fprintf(stderr,"pre calc_W\n");
   W = calc_W(NMAX, W, r_v, star);
@@ -62,7 +62,7 @@ void twobody(double m[], double x[][3], double v[][3]){
   return;
 }
 */
-void read_nemo(int NMAX,double Mstar,double Rstar,double eps,Istar *star){
+void read_nemo(int NMAX,double Mstar,double Rstar,double eps,ISTAR *star){
   int i,j,nn,dim;
   double t;
   double mstar,rstar,vstar;

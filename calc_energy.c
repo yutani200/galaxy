@@ -4,7 +4,7 @@
 #include "config.h"
 #include "unit.h"
 
-double calc_energy(int n,Istar *star){
+double calc_energy(int n,ISTAR *star){
   int i,j,k;
   double e_k, e_w, r2, G;
   // kinetic energy 
@@ -30,7 +30,7 @@ double calc_energy(int n,Istar *star){
   return (e_k + e_w);
 }
 
-double calc_W(int n, double W, double r_v,Istar *star){
+double calc_W(int n, double W, double r_v,ISTAR *star){
   int i,j;
   double r2,G;
   W = 0.0;

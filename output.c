@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 //void output(int NMAX,double T,double m[],double x[][3],double vel[][3],double acc[][3],double H,double dt,double eps2);
-void output(int NMAX,double T,double dH,double dt,Istar *star){
+void output(int NMAX,double T,double dH,double dt,ISTAR *star){
   char filename[100];
   FILE *fp;
   sprintf(filename,"./data/%s.%03d.txt","star",(int)T);
